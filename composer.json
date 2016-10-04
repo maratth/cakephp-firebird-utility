@@ -1,5 +1,5 @@
 {
-    "name": "lifeoryou/cakephp-firebird-utility",
+    "name": "microtec/cakephp-firebird-utility",
     "description": "CakePHP 3 Driver for Firebird Database",
     "type": "cakephp-plugin",
     "keywords": [
@@ -8,7 +8,7 @@
         "database",
         "driver"
     ],
-    "homepage": "https://github.com/mbamarante/cakephp-firebird-driver",
+    "homepage": "https://github.com/lifeoryou/cakephp-firebird-driver",
     "license": "MIT",
     "authors": [
         {
