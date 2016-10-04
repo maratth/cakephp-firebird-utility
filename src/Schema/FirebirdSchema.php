@@ -11,7 +11,7 @@
 namespace CakephpFirebird\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\BaseScBhema;
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\Table;
 /**
  * Schema generation/reflection features for Firebird
