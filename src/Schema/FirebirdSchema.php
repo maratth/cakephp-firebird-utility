@@ -153,7 +153,7 @@ class FirebirdSchema extends BaseSchema
         
         // Les entiers unsigned ne sont pas supporter sur firebird.
         //$unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
-        $unsiged = false;
+        $unsigned = false;
         if (strpos($col, 'bigint')) {
             return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
         }
