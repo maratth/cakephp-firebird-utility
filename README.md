@@ -1,6 +1,7 @@
 # CakePHP 3 Driver for Firebird Database
 
 Currently provides data reading, inserting, deleting and updating.
+
 This plugin is inspired by mbamarante/cakephp-firebird-driver.
 
 ## Installation
@@ -10,7 +11,7 @@ You can install this plugin into your CakePHP application using [composer](http:
 The recommended way to install composer packages is:
 
 ```
-composer require lifeoryou/cakephp-firebird-utility
+composer require microtec/cakephp-firebird-utility
 ```
 
 ## Requirements
