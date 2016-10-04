@@ -1,5 +1,5 @@
 {
-    "name": "mbamarante/cakephp-firebird-driver",
+    "name": "lifeoryou/cakephp-firebird-utility",
     "description": "CakePHP 3 Driver for Firebird Database",
     "type": "cakephp-plugin",
     "keywords": [
@@ -19,11 +19,15 @@
         {
             "name": "Others",
             "homepage": "https://github.com/mbamarante/cakephp-firebird-driver/graphs/contributors"
+        },
+        {
+            "name": "REYDY Valentin - GUERRIER Julien",
+            "role": "updater"
         }
     ],
     "support": {
-        "issues": "https://github.com/mbamarante/cakephp-firebird-driver/issues",
-        "source": "https://github.com/mbamarante/cakephp-firebird-driver"
+        "issues": "https://github.com/lifeoryou/cakephp-firebird-utility/issues",
+        "source": "https://github.com/lifeoryou/cakephp-firebird-utility"
     },
     "config": {
         "preferred-install": "src"
