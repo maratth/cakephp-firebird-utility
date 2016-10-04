@@ -141,10 +141,10 @@ class FirebirdSchema extends BaseSchema
             $precision = (int)$precision;
         }
 
-        if (strpos($col, 'blob')) {
+        if ($col === 'blob') {
             return ['type' => 'binary', 'length' => $length];
         }
-        if (strpos($col, 'blobstring')) {
+        if ($col === 'blobstring') {
             return ['type' => 'string', 'length' => $length];
         }
         if (in_array($col, ['date', 'time', 'timestamp'])) {
@@ -154,7 +154,7 @@ class FirebirdSchema extends BaseSchema
         // Les entiers unsigned ne sont pas supporter sur firebird.
         //$unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
         $unsigned = false;
-        if (strpos($col, 'bigint')) {
+        if ($col === 'bigint') {
             return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
         }
         if (in_array($col, ['integer', 'smallint'])) {
@@ -166,7 +166,7 @@ class FirebirdSchema extends BaseSchema
         if ($col === 'char') {
             return ['type' => 'string', 'fixed' => true, 'length' => $length];
         }
-        if (strpos($col, 'char')) { //varchar
+        if ($col === 'varchar') {
             return ['type' => 'string', 'length' => $length];
         }
         if (in_array($col, ['float', 'double'])) {
