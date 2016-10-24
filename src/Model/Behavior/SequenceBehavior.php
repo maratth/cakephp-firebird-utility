@@ -31,7 +31,7 @@ class SequenceBehavior extends Behavior {
     public function initialize(array $config) {
         $config = $this->config();
         
-        if (isset($config['sequence'])) {
+        if (!isset($config['sequence'])) {
             $config['sequence'] = 'gen_' . $this->_table->table();
         }
         
