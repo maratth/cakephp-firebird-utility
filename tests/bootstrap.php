@@ -14,7 +14,7 @@ unset($findRoot);
 chdir($root);
 
 if (!getenv('cakephpfirebird_dsn')) {
-    putenv('cakephpfirebird_dsn=Cake\Database\Connection://127.0.0.1:3050//path-to-database/database.fdb?charset=ISO8859_1&username=sysdba&password=masterkey&driver=CakephpFirebird\Driver\Firebird');
+    putenv('cakephpfirebird_dsn=Cake\Database\Connection://127.0.0.1:3050//C:/TESTFIREBIRD.FDB?username=sysdba&password=masterkey&driver=CakephpFirebird\Driver\Firebird');
 }
 
 require $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
