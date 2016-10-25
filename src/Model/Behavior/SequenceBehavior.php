@@ -58,7 +58,11 @@ class SequenceBehavior extends Behavior {
      * @param EntityInterface $entity
      */
     public function beforeSave(Event $event, EntityInterface $entity) {
-        $this->genId($entity);
+        $config = $this->config();
+        
+        if ($entity->get($config['field']) == null) {
+            $this->genId($entity); // regarder si le code est pas deja seté
+        }
     }
 
 }
