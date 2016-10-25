@@ -16,7 +16,8 @@ class SequenceBehavior extends Behavior {
 
     /**
      * Default configuration.
-     *
+     * La clef sequence est ajouter dans le hook d'initialisation.
+     * 
      * @var array
      */
     protected $_defaultConfig = [
@@ -54,6 +55,7 @@ class SequenceBehavior extends Behavior {
     
     /**
      * Execute genId pour générer un id.
+     * Si le code n'est pas définie.
      * @param Event $event
      * @param EntityInterface $entity
      */
@@ -61,7 +63,7 @@ class SequenceBehavior extends Behavior {
         $config = $this->config();
         
         if ($entity->get($config['field']) == null) {
-            $this->genId($entity); // regarder si le code est pas deja seté
+            $this->genId($entity);
         }
     }
 
