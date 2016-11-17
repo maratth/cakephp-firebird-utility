@@ -39,6 +39,7 @@ class Firebird extends Driver
         'encoding' => 'utf8',
         'timezone' => null,
         'init' => [],
+        'role' => false,
     ];
 
     /**
@@ -55,6 +56,11 @@ class Firebird extends Driver
         $config = $this->_config;
 
         $dsn = "firebird:dbname={$config['host']}/{$config['port']}:{$config['database']};charset={$config['encoding']}";
+
+        if ($config['role'] !== false) {
+            $dsn .= ';role='.$config['role'];
+        }
+
         $this->_connect($dsn, $config);
 
         if (!empty($config['init'])) {
