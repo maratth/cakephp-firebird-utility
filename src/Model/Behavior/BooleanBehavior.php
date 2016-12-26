@@ -2,8 +2,11 @@
 namespace CakephpFirebird\Model\Behavior;
 
 use ArrayObject;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
+use Cake\ORM\Entity;
+use Cake\ORM\Query;
 
 /**
  * Boolean behavior.
@@ -31,7 +34,7 @@ class BooleanBehavior extends Behavior
      * @param type $query
      * @param type $options
      */
-    public function beforeFind(Event $event, $query, $options) {
+    public function beforeFind(Event $event, Query $query, ArrayObject $options) {
         $query->formatResults(function($results) {
             return $results->map(function($row) {
                 foreach ($row->toArray() as $key => $value) {
@@ -43,6 +46,30 @@ class BooleanBehavior extends Behavior
                 return $row;
             });
         });
+    }
+    
+    /**
+     * Envenement beforeSave, Récupère les données modifiées
+     *  puis si c'est un boolean, convertie sa valeur en boolean Microtec.
+     * 
+     * @param Event $event Evenement Cake
+     * @param EntityInterface $entity Entite concernée
+     * @param ArrayObject $options Options de la Query
+     */
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options) {
+        if ($entity->dirty()) {
+            
+            if ($entity instanceof Entity && !empty($entity->source())) {
+                $repository = \Cake\ORM\TableRegistry::get($entity->source());
+                $datas = $entity->extract($repository->schema()->columns(), true);
+                
+                foreach ($datas as $propertyName => $data) {
+                    if (is_bool($data)) {
+                        $entity->set($propertyName, $data ? 'Oui' : 'Non');
+                    }
+                }
+            }
+        }
     }
 
 }
