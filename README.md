@@ -33,6 +33,7 @@ Here is an example datasource configuration:
     'username' => 'sysdba',
     'password' => 'masterkey',
     'database' => '/path-to-database/database.fdb',
+    'role'     => false
     ]
 ```
 
