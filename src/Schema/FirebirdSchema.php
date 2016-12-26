@@ -65,7 +65,8 @@ class FirebirdSchema extends BaseSchema
                       COALESCE(coll.rdb$collation_name, cset.rdb$character_set_name) AS field_collation,
                       r.rdb$description AS field_comment, f.rdb$field_precision AS field_precision,
                       IIF(f.rdb$field_scale IS NULL, NULL, f.rdb$field_scale * -1) AS field_scale,
-                      f.rdb$field_sub_type AS field_subtype, cset.rdb$character_set_name AS field_charset
+                      f.rdb$field_sub_type AS field_subtype, cset.rdb$character_set_name AS field_charset,
+                      r.rdb$field_source as field_domain
                 FROM rdb$relation_fields r
                 LEFT JOIN rdb$fields f ON r.rdb$field_source = f.rdb$field_name
                 LEFT JOIN rdb$collations coll ON f.rdb$collation_id = coll.rdb$collation_id AND f.rdb$character_set_id = coll.rdb$character_set_id
@@ -123,7 +124,7 @@ class FirebirdSchema extends BaseSchema
      * @return array Array of column information.
      * @throws \Cake\Database\Exception When column type cannot be parsed.
      */
-    protected function _convertColumn($column)
+    protected function _convertColumn($column, $domain)
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
         if (empty($matches)) {
@@ -163,6 +164,9 @@ class FirebirdSchema extends BaseSchema
         if ($col === 'char' && $length === 36) {
             return ['type' => 'uuid', 'length' => null];
         }
+        if (($col === 'char' && $length === 3) && strtoupper($domain) === 'BOOLEAN') {
+            return ['type' => 'boolean', 'length' => null];
+        }
         if ($col === 'char') {
             return ['type' => 'string', 'fixed' => true, 'length' => $length];
         }
@@ -196,7 +200,7 @@ class FirebirdSchema extends BaseSchema
      */
     public function convertColumnDescription(Table $table, $row)
     {
-        $field = $this->_convertColumn($row['FIELD_TYPE']);
+        $field = $this->_convertColumn($row['FIELD_TYPE'], $row['FIELD_DOMAIN']);
         $field += [
             'null' => $row['FIELD_NULL'] === '1' ? true : false,
             'default' => $row['FIELD_DEFAULT'],
