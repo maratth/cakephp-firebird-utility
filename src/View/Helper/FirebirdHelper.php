@@ -10,7 +10,14 @@ use Cake\View\Helper\HtmlHelper;
  */
 class FirebirdHelper extends HtmlHelper {
     
-    public function imageFromBlob($blob, $option = []) {
+    /**
+     * Affiche une image depuis un blob.
+     * 
+     * @param string $blob
+     * @param array $options
+     * @return string the img tags.
+     */
+    public function imageFromBlob($blob, $options = []) {
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         
         $ext = 'png';
