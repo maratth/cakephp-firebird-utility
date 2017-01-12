@@ -53,9 +53,6 @@ class FirebirdCompiler extends QueryCompiler
     {
         $driver = $query->connection()->driver();
         $select = 'SELECT %s%s%s';
-        if ($this->_orderedUnion && $query->clause('union')) {
-            $select = '(SELECT %s%s%s';
-        }
         $distinct = $query->clause('distinct');
         $modifiers = $query->clause('modifier') ?: null;
 
@@ -82,7 +79,36 @@ class FirebirdCompiler extends QueryCompiler
             $modifiers = implode(' ', $modifiers) . ' ';
         }
 
-        return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
+        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
+    }
+    
+    /**
+     * Builds the SQL string for all the UNION clauses in this query, when dealing
+     * with query objects it will also transform them using their configured SQL
+     * dialect.
+     *
+     * @param array $parts list of queries to be operated with UNION
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildUnionPart($parts, $query, $generator) {
+        $parts = array_map(function ($p) use ($generator) {
+            $p['query'] = $p['query']->sql($generator);
+            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+            $prefix = $p['all'] ? 'ALL ' : '';
+            if ($this->_orderedUnion) {
+                return "{$prefix} {$p['query']}";
+            }
+
+            return $prefix . $p['query'];
+        }, $parts);
+
+        if ($this->_orderedUnion) {
+            return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+        }
+
+        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
     }
 
     /**
