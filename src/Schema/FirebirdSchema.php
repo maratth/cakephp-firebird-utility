@@ -57,7 +57,7 @@ class FirebirdSchema extends BaseSchema
                         WHEN 12 THEN \'date\'
                         WHEN 13 THEN \'time\'
                         WHEN 35 THEN \'timestamp\'
-                        WHEN 37 THEN \'varchar(\' || f.rdb$character_length || \')\'
+                        WHEN 37 THEN IIF((f.rdb$computed_source IS NULL), \'varchar(\' || f.rdb$character_length || \')\', \'varchar(\' ||  f.rdb$field_length || \')\')
                         WHEN 23 THEN \'boolean\'
                         ELSE \'UNKNOWN\'
                       END AS field_type,
