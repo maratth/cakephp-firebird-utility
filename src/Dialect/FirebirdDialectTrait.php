@@ -46,38 +46,6 @@ trait FirebirdDialectTrait
     protected $_schemaDialect;
 
     /**
-     * Modify the limit/offset to TSQL
-     *
-     * @param \Cake\Database\Query $query The query to translate
-     * @return \Cake\Database\Query The modified query
-     */
-    protected function _selectQueryTranslator($query)
-    {
-        $skip = false;
-        $limit = $query->clause('limit');
-        $offset = $query->clause('offset');
-
-        if (isset($query->clause('select')['count'])) {
-            //TODO instanceof \Cake\Database\Expression\FunctionExpression)
-            $skip = true;
-        }
-
-        if ($limit && !$offset && !$skip) {
-            $query->modifier(['_auto_top_' => sprintf('FIRST %d', $limit)]);
-        }
-
-        if ($limit && $offset && !$skip) {
-            $query->modifier(['_auto_top_' => sprintf('FIRST %d SKIP %d', $limit, $offset)]);
-        }
-
-        if ($skip) {
-            $query->modifier(['_auto_top_' => '']);
-        }
-
-        return $this->_transformDistinct($query);
-    }
-
-    /**
      * Transforms an insert query that is meant to insert multiple rows at a time,
      * otherwise it leaves the query untouched.
      *

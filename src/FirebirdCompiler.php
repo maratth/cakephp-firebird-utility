@@ -40,7 +40,7 @@ class FirebirdCompiler extends QueryCompiler
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order',
-        'limit', 'union', 'offset', 'epilog'
+        'union', 'epilog'
     ];
 
     /**
@@ -54,8 +54,9 @@ class FirebirdCompiler extends QueryCompiler
         $driver = $query->connection()->driver();
         $select = 'SELECT %s%s%s';
         $distinct = $query->clause('distinct');
-        $modifiers = $query->clause('modifier') ?: null;
-
+        $modifiers = $query->clause('modifier') ?: [];
+		$modifiers += $this->_extractLimitOffsetPart($query);
+		
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
 
@@ -77,7 +78,9 @@ class FirebirdCompiler extends QueryCompiler
         if ($modifiers !== null) {
             $modifiers = $this->_stringifyExpressions($modifiers, $generator);
             $modifiers = implode(' ', $modifiers) . ' ';
-        }
+        } else {
+			$modifiers = null;
+		}
 
         return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
     }
@@ -159,5 +162,40 @@ class FirebirdCompiler extends QueryCompiler
     protected function _buildLimitPart($limit, $query)
     {
         return false;
+    }
+	
+	/**
+     * Extract Firebird limit / offset part instance of modifiers clause.
+     * This function is executed in _buildSelectPart 
+     *  because First and Skip must be after SELECT but before selected fields.
+     * 
+     * @param Query $query
+     * @return array Limit and Skip clause.
+     */
+    private function _extractLimitOffsetPart($query) {
+        $modifiers = [];
+        
+        $skip = false;
+        $limit = $query->clause('limit');
+        $offset = $query->clause('offset');
+
+        if (isset($query->clause('select')['count'])) {
+            //TODO instanceof \Cake\Database\Expression\FunctionExpression)
+            $skip = true;
+        }
+
+        if ($limit && !$offset && !$skip) {
+            $modifiers = ['_auto_top_' => sprintf('FIRST %d', $limit)];
+        }
+
+        if ($limit && $offset && !$skip) {
+            $modifiers = ['_auto_top_' => sprintf('FIRST %d SKIP %d', $limit, $offset)];
+        }
+
+        if ($skip) {
+            $modifiers = ['_auto_top_' => ''];
+        }
+        
+        return $modifiers;
     }
 }
