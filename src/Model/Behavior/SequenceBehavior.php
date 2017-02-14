@@ -21,8 +21,7 @@ class SequenceBehavior extends Behavior {
      * @var array
      */
     protected $_defaultConfig = [
-        'field' => 'code',
-		'offset' => '1'
+        'field' => 'code'
     ];
     
     /**
@@ -31,7 +30,7 @@ class SequenceBehavior extends Behavior {
      * @throws CakephpFirebirdException
      */
     public function initialize(array $config) {
-        $config += $this->config();
+        $config = $this->config();
         
         if (!isset($config['sequence'])) {
             $config['sequence'] = 'gen_' . $this->_table->table();
@@ -48,7 +47,7 @@ class SequenceBehavior extends Behavior {
         $config = $this->config();
         
         $stmt = $this->_table->connection()->query(
-                sprintf('SELECT GEN_ID(%s, %s) FROM RDB$DATABASE', $config['sequence'], $config['offset'])
+                sprintf('SELECT GEN_ID(%s, 1) FROM RDB$DATABASE', $config['sequence'])
         );
         
         $entity->set($config['field'], $stmt->fetch()[0]);
