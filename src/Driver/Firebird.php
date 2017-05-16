@@ -17,6 +17,7 @@ use Cake\Database\Driver\PDODriverTrait;
 use CakephpFirebird\Dialect\FirebirdDialectTrait;
 use CakephpFirebird\Schema\FirebirdSchema;
 use CakephpFirebird\Statement\FirebirdStatement;
+use CakephpFirebird\CakephpFirebirdException;
 
 class Firebird extends Driver
 {
@@ -40,6 +41,7 @@ class Firebird extends Driver
         'timezone' => null,
         'init' => [],
         'role' => false,
+        'maxFieldLength' => 31,
     ];
 
     /**
@@ -104,9 +106,15 @@ class Firebird extends Driver
      */
     public function prepare($query)
     {
+        $maxFieldLength = $this->_config['maxFieldLength'];
+
         $this->connect();
         $isObject = $query instanceof Query;
-        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
+        $sql = $isObject ? $query->sql() : $query;
+        if (preg_match(sprintf('/[,\s](?<field>\w+\.\w+)\sas\s"(?<alias>\w{%s,})"/i', $maxFieldLength + 1), $sql, $matches)) {
+            throw new CakephpFirebirdException(sprintf('The length of alias "%s" on field "%s" is more than %s characters', $matches['alias'], $matches['field'], $maxFieldLength));
+        }
+        $statement = $this->_connection->prepare($sql);
         return new FirebirdStatement($statement, $this);
     }
 
