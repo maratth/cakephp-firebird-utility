@@ -39,20 +39,6 @@ class SequenceBehavior extends Behavior {
         
         $this->config($config);
     }
-
-    /**
-     * Execute une requete sur la base pour générer un code.
-     * @param Entity $entity
-     */
-    public function genId(Entity $entity) {
-        $config = $this->config();
-        
-        $stmt = $this->_table->connection()->query(
-                sprintf('SELECT GEN_ID(%s, %s) FROM RDB$DATABASE', $config['sequence'], $config['offset'])
-        );
-        
-        $entity->set($config['field'], $stmt->fetch()[0]);
-    }
     
     /**
      * Execute genId pour générer un id.
@@ -64,7 +50,11 @@ class SequenceBehavior extends Behavior {
         $config = $this->config();
         
         if ($entity->get($config['field']) == null) {
-            $this->genId($entity);
+            $stmt = $this->_table->connection()->query(
+                    sprintf('SELECT GEN_ID(%s, %s) FROM RDB$DATABASE', $config['sequence'], $config['offset'])
+            );
+
+            $entity->set($config['field'], $stmt->fetch()[0]);
         }
     }
 
