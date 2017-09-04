@@ -22,7 +22,8 @@ class SequenceBehavior extends Behavior {
      */
     protected $_defaultConfig = [
         'field' => 'code',
-        'offset' => '1'
+        'offset' => '1',
+        'base' => false
     ];
     
     /**
@@ -51,7 +52,12 @@ class SequenceBehavior extends Behavior {
         
         if ($entity->get($config['field']) == null) {
             $stmt = $this->_table->connection()->query(
-                    sprintf('SELECT GEN_ID(%s, %s) FROM RDB$DATABASE', $config['sequence'], $config['offset'])
+                    sprintf(
+                            'SELECT GEN_ID(%s, %s)%s FROM RDB$DATABASE', 
+                            $config['sequence'], 
+                            $config['offset'], 
+                            $config['base'] ? "+ {$config['base']}" : ''
+                    )
             );
 
             $entity->set($config['field'], $stmt->fetch()[0]);

@@ -40,14 +40,14 @@ class BooleanBehavior extends Behavior
                 if (is_null($row)) {
                     return $row;
                 }
-                $tab = is_array($row) ? $row : $row->toArray(); // Au cas ou les données ne sont pas hydraté.
-                
+                $tab = is_array($row) ? $row : method_exists($row, 'toArray') ? $row->toArray() : []; // Au cas ou les données ne sont pas hydraté.
+
                 foreach ($tab as $key => $value) {
                     if (is_string($value) && in_array(trim($value), ['Oui', 'Non'], true)) {
                         $row[$key] = (trim($row[$key]) === 'Oui');
                     }
                 }
-                
+
                 return $row;
             });
         });
