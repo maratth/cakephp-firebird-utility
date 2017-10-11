@@ -44,7 +44,7 @@ class FirebirdStatement extends PDOStatement
             strpos($this->_statement->queryString, 'UPDATE') === 0 ||
             strpos($this->_statement->queryString, 'DELETE') === 0
         ) {
-            return ($this->errorCode() == '00000' ? 1 : 0);
+            return ($this->errorCode() == '00000' ? $this->_statement->rowCount() : 0);
         }
 
         $count = count($this->_statement->fetchAll());
