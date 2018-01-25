@@ -44,7 +44,7 @@ class FirebirdSchema extends BaseSchema
                                         WHEN 0 THEN \'blob\'
                                         WHEN 1 THEN \'blobstring\'
                                       END
-                        WHEN 14 THEN \'char(\' || f.rdb$character_length || \')\'
+                        WHEN 14 THEN \'char(\' || IIF(f.rdb$computed_source IS NULL, f.rdb$character_length, f.rdb$field_length / cset.RDB$BYTES_PER_CHARACTER) || \')\'
                         WHEN 27 THEN \'double\'
                         WHEN 10 THEN \'float\'
                         WHEN 16 THEN CASE f.rdb$field_sub_type
@@ -57,7 +57,7 @@ class FirebirdSchema extends BaseSchema
                         WHEN 12 THEN \'date\'
                         WHEN 13 THEN \'time\'
                         WHEN 35 THEN \'timestamp\'
-                        WHEN 37 THEN IIF((f.rdb$computed_source IS NULL), \'varchar(\' || f.rdb$character_length || \')\', \'varchar(\' ||  f.rdb$field_length || \')\')
+                        WHEN 37 THEN IIF((f.rdb$computed_source IS NULL), \'varchar(\' || f.rdb$character_length || \')\', \'varchar(\' ||  f.rdb$field_length / cset.RDB$BYTES_PER_CHARACTER || \')\')
                         WHEN 23 THEN \'boolean\'
                         ELSE \'UNKNOWN\'
                       END AS field_type,
