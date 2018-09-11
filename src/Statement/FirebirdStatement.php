@@ -31,6 +31,12 @@ class FirebirdStatement extends PDOStatement
     public function execute($params = null)
     {
         $result = $this->_statement->execute($params);
+
+        // If error in statement execution
+        if (!$result) {
+            dd($this->_statement->errorInfo());
+        }
+
         return $result;
     }
 
