@@ -42,7 +42,8 @@ class FirebirdStatement extends PDOStatement
         if (
             strpos($this->_statement->queryString, 'INSERT') === 0 ||
             strpos($this->_statement->queryString, 'UPDATE') === 0 ||
-            strpos($this->_statement->queryString, 'DELETE') === 0
+            strpos($this->_statement->queryString, 'DELETE') === 0 ||
+            strpos($this->_statement->queryString, 'EXECUTE BLOCK') === 0 && strpos($this->_statement->queryString, 'INSERT INTO') !== false
         ) {
             return ($this->errorCode() == '00000' ? $this->_statement->rowCount() : 0);
         }
