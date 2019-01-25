@@ -17,7 +17,7 @@ use Cake\Database\Driver\PDODriverTrait;
 use CakephpFirebird\Dialect\FirebirdDialectTrait;
 use CakephpFirebird\Schema\FirebirdSchema;
 use CakephpFirebird\Statement\FirebirdStatement;
-use CakephpFirebird\CakephpFirebirdException;
+use CakephpFirebird\Exception\CakephpFirebirdException;
 
 class Firebird extends Driver
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace CakephpFirebird;
+namespace CakephpFirebird\Exception;
 
 use Cake\Core\Exception\Exception;
 
@@ -10,5 +10,5 @@ use Cake\Core\Exception\Exception;
  * @author valentin
  */
 class CakephpFirebirdException extends Exception {
-    
+
 }
