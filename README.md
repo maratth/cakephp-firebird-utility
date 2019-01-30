@@ -37,6 +37,16 @@ Here is an example datasource configuration:
     ]
 ```
 
+## Firebird 3 - Boolean datatype
+### Requirements
+- Firebird >= 3
+- Php >= 7.3
+### Usage
+Put this code in you `config/bootstrap.php` :
+```php
+Type::map('boolean', '\CakephpFirebird\Type\BooleanType');
+```
+
 ## Known Issues
 
 - disable multiple records insert in the same query (e.g.: fixtures)
