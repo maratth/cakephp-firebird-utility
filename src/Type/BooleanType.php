@@ -1,6 +1,6 @@
 <?php
 
-namespace CakephpFirebird;
+namespace CakephpFirebird\Type;
 
 use Cake\Database\Driver;
 use Cake\Database\Type\BoolType;
