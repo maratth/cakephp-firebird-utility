@@ -11,6 +11,7 @@
 namespace CakephpFirebird;
 
 use Cake\Database\QueryCompiler;
+use Cake\Database\Schema\Collection;
 
 /**
  * Responsible for compiling a Query object into its SQL representation
@@ -39,7 +40,7 @@ class FirebirdCompiler extends QueryCompiler
      * {@inheritDoc}
      */
     protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'epilog', 
+        'select', 'from', 'join', 'where', 'group', 'having', 'epilog',
         'order', 'union'
     ];
 
@@ -56,7 +57,7 @@ class FirebirdCompiler extends QueryCompiler
         $distinct = $query->clause('distinct');
         $modifiers = $query->clause('modifier') ?: [];
 		$modifiers += $this->_extractLimitOffsetPart($query);
-		
+
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
 
@@ -84,7 +85,7 @@ class FirebirdCompiler extends QueryCompiler
 
         return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
     }
-    
+
     /**
      * Builds the SQL string for all the UNION clauses in this query, when dealing
      * with query objects it will also transform them using their configured SQL
@@ -149,6 +150,18 @@ class FirebirdCompiler extends QueryCompiler
             $values = str_replace(')', ' FROM RDB$DATABASE', $values);
         }
 
+        // Add returning with primary key column
+        $schema = $query->connection()->schemaCollection();
+        $primaryKey = $schema->describe($query->clause('insert')[0])->primaryKey();
+        if (count($primaryKey)) {
+            $values .= ' RETURNING ';
+            $primaryKey = array_map(function ($key) {
+                return $key . ' AS "' . $key . '"';
+            }, $primaryKey);
+
+            $values .= join(', ', $primaryKey);
+        }
+
         return trim($values);
     }
 
@@ -163,18 +176,18 @@ class FirebirdCompiler extends QueryCompiler
     {
         return false;
     }
-	
+
 	/**
      * Extract Firebird limit / offset part instance of modifiers clause.
-     * This function is executed in _buildSelectPart 
+     * This function is executed in _buildSelectPart
      *  because First and Skip must be after SELECT but before selected fields.
-     * 
+     *
      * @param Query $query
      * @return array Limit and Skip clause.
      */
     private function _extractLimitOffsetPart($query) {
         $modifiers = [];
-        
+
         $skip = false;
         $limit = $query->clause('limit');
         $offset = $query->clause('offset');
@@ -195,7 +208,7 @@ class FirebirdCompiler extends QueryCompiler
         if ($skip) {
             $modifiers = ['_auto_top_' => ''];
         }
-        
+
         return $modifiers;
     }
 }

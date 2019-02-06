@@ -10,6 +10,7 @@
  */
 namespace CakephpFirebird\Driver;
 
+use Cake\Core\Configure;
 use PDO;
 use Cake\Database\Driver;
 use Cake\Database\Query;
@@ -115,6 +116,10 @@ class Firebird extends Driver
             throw new CakephpFirebirdException(sprintf('The length of alias "%s" on field "%s" is more than %s characters', $matches['alias'], $matches['field'], $maxFieldLength));
         }
         $statement = $this->_connection->prepare($sql);
+        if ($statement === false && Configure::read('debug')) {
+            debug($this->_connection->errorInfo());
+            dd($sql);
+        }
         return new FirebirdStatement($statement, $this);
     }
 
@@ -125,19 +130,6 @@ class Firebird extends Driver
      * @return bool true if driver supports dynamic constraints
      */
     public function supportsDynamicConstraints()
-    {
-        return false;
-    }
-
-    /**
-     * autoinc has to be defined inside firebird db (generators/trigger)
-     * becouse firebird PDO doesn't implements lastInsertId()
-     *
-     * @param null $table
-     * @param null $column
-     * @return int|string
-     */
-    public function lastInsertId($table = null, $column = null)
     {
         return false;
     }
