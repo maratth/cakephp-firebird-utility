@@ -12,6 +12,7 @@ namespace CakephpFirebird;
 
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\Collection;
+use Cake\Database\Type;
 
 /**
  * Responsible for compiling a Query object into its SQL representation
@@ -45,6 +46,18 @@ class FirebirdCompiler extends QueryCompiler
     ];
 
     /**
+     * If fb3 bool is managed.
+     *
+     * @var bool
+     */
+    protected $_fb3Boolean = false;
+
+    public function __construct()
+    {
+        $this->_fb3Boolean = Type::getMap('boolean') === '\CakephpFirebird\Type\BooleanType';
+    }
+
+    /**
      * @param array $parts
      * @param \Cake\Database\Query $query
      * @param \Cake\Database\ValueBinder $generator
@@ -61,7 +74,12 @@ class FirebirdCompiler extends QueryCompiler
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
 
+        $defaultTypes = $query->getDefaultTypes();
         foreach ($parts as $k => $p) {
+            if ($this->_fb3Boolean && isset($defaultTypes[$p]) && $defaultTypes[$p] === 'boolean') {
+                $p = 'CAST(' . $p . ' AS VARCHAR(5))';
+            }
+
             if (!is_numeric($k)) {
                 $p = $p . ' AS "' . $k . '"';
             }
